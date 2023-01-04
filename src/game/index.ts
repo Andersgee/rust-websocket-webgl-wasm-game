@@ -32,6 +32,8 @@ export class Game {
     this.ctx = ctx;
     this.universe = new wasm.Universe();
 
+    this.universe.connect("wss://echo.websocket.events");
+
     this.lastFrameTimeStamp = performance.now();
 
     let animId: number | null = null;
