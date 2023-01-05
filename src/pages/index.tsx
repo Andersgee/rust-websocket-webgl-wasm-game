@@ -1,7 +1,7 @@
 //import { Inter } from "@next/font/google";
 import { useEffect, useRef } from "react";
 import { Game } from "../game";
-import { initWasm } from "../game/init-wasm";
+import { initGame } from "../game/init";
 
 //const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +17,7 @@ export default function Home() {
       isInited.current = true;
       console.log("initing wasm");
 
-      initWasm()
+      initGame()
         .then((memory) => {
           game.current = new Game(canvasRef.current!, fpsRef.current!, memory);
         })

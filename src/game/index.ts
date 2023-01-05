@@ -32,7 +32,37 @@ export class Game {
     this.ctx = ctx;
     this.universe = new wasm.Universe();
 
-    this.universe.connect("wss://echo.websocket.events");
+    const url = "wss://echo.websocket.events";
+    const ws = new WebSocket(url);
+    ws.binaryType = "arraybuffer"; //Use ArrayBuffer for binary data instead of "blob".
+    ws.onopen = () => {
+      console.log("ws onopen");
+
+      console.log("ws sending string");
+      ws.send("ping");
+
+      console.log("ws sending ArrayBuffer");
+      const u8arr = new Float32Array([0, 1, 2, 3.9]);
+      ws.send(u8arr.buffer);
+    };
+
+    ws.onclose = () => console.log("ws onclos");
+    ws.onerror = () => console.log("ws onerror");
+    ws.onmessage = (ev) => {
+      if (ev.data instanceof ArrayBuffer) {
+        console.log(
+          "ws recieved ArrayBuffer, Uint8Array",
+          new Float32Array(ev.data)
+        );
+        this.universe.onmessage_f32array(new Float32Array(ev.data));
+      } else if (typeof ev.data === "string") {
+        console.log("ws recieved string: ", ev.data);
+        this.universe.onmessage_string(ev.data);
+      } else {
+        console.log("ws recieved unkown type (probably blob?)");
+        console.log(ev.data);
+      }
+    };
 
     this.lastFrameTimeStamp = performance.now();
 
