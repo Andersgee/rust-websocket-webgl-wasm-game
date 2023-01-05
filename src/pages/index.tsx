@@ -30,6 +30,7 @@ export default function Home() {
   return (
     <div className="">
       <main>
+        <h1 className="text-orange-300">tw</h1>
         <button onClick={() => game.current?.greet()}>click me</button>
         <div ref={fpsRef}></div>
         <canvas ref={canvasRef} width={64 * 5} height={64 * 5} />
