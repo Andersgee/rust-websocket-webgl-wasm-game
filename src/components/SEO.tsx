@@ -79,7 +79,7 @@ type Props = {
 export function SEO({
   title,
   type = "website",
-  site_name = "Musker",
+  site_name = "Battle",
   url,
   image,
   audio,
