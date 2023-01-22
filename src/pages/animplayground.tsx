@@ -1,41 +1,34 @@
 //import { Inter } from "@next/font/google";
 import { useEffect, useRef } from "react";
-import { SEO } from "src/components/SEO";
-import type { Game } from "../game/game";
-import { initGame } from "../game/init";
+import type { Animplayground } from "../game/animplayground";
+import { initAnimplayground } from "../game/initAnimplayground";
 
 //const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const divRef = useRef<HTMLDivElement>(null);
+  const fpsRef = useRef<HTMLDivElement>(null);
   const isInited = useRef(false);
-  const game = useRef<Game | null>(null);
+  const game = useRef<Animplayground | null>(null);
 
   useEffect(() => {
     console.log("running effect");
-    if (!isInited.current && canvasRef.current && divRef.current) {
+    if (!isInited.current && canvasRef.current && fpsRef.current) {
       isInited.current = true;
       console.log("initing game");
 
-      initGame(canvasRef.current, divRef.current)
+      initAnimplayground(canvasRef.current, fpsRef.current)
         .then((g) => {
           game.current = g;
         })
         .catch(() => {
-          console.log("failed to init game");
+          console.log("failed to init animplayground");
         });
     }
   }, []);
 
   return (
     <>
-      <SEO
-        title="lowpoly multiplayer fighting game"
-        description="Lowpoly multiplayer fighting game. Built with webgl, webassembly, websocket and rust."
-        url="/"
-        image="/images/share.png"
-      />
       <canvas
         className="absolute -z-10 h-screen w-screen"
         ref={canvasRef}
@@ -43,7 +36,7 @@ export default function Home() {
         height={64 * 5}
       />
       <div className="">
-        {/* 
+        <h1 className="text-orange-300">tw</h1>
         <button
           onClick={() => {
             console.log("a");
@@ -52,13 +45,8 @@ export default function Home() {
         >
           click me
         </button>
-         */}
+        <div ref={fpsRef}></div>
       </div>
-      <div className="text-red-500"></div>
-      <div
-        className="p-2 bg-neutral-200 w-20 text-black font-bold text-center"
-        ref={divRef}
-      ></div>
     </>
   );
 }

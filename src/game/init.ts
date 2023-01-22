@@ -1,7 +1,11 @@
 import init from "../wasm";
+import { Game } from "./game";
+import { setupInputHandler } from "./input";
 
 /*
 NOTES TO SELF:
+
+init the wasm built with wasm-pack --target web
 
 notes:
  - nextjs has issues with using the things produced by 'wasm-pack --target bundle' (which is the default)
@@ -19,9 +23,15 @@ notes:
 */
 
 /**
- * init the wasm built with wasm-pack --target web
+ * init the wasm built with wasm-pack --target web and a Game javascript class
+ *
+ * also return game in case we want to call some methods on it from react (chat for example)
  */
-export async function initGame() {
+export async function initGame(canvas: HTMLCanvasElement, div: HTMLDivElement) {
   const wasm = await init();
-  return wasm.memory;
+  console.log("wasm is inited");
+  const game = new Game(wasm.memory, canvas, div);
+  setupInputHandler(canvas, game);
+
+  return game;
 }
