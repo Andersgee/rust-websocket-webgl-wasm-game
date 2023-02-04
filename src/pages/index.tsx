@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="lowpoly multiplayer fighting game"
+        title="Battle"
         description="Lowpoly multiplayer fighting game. Built with webgl, webassembly, websocket and rust."
         url="/"
         image="/images/share.png"
