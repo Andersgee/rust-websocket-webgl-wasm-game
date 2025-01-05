@@ -4,6 +4,7 @@ import * as kf from "./keyframes";
 export type Keyframe = {
   quats: quat[];
   pos: vec3;
+  sliderVals?: number[][];
 };
 
 type Bone = {
@@ -25,12 +26,12 @@ export const animations = {
     keyframes: [
       kf.pass_L,
       kf.peak_L,
-      kf.contact_R,
-      kf.down_R,
-      kf.pass_R,
-      kf.peak_R,
       kf.contact_L,
       kf.down_L,
+      kf.pass_R,
+      kf.peak_R,
+      kf.contact_R,
+      kf.down_R,
       kf.pass_L,
     ],
     timings: Array.from({ length: 9 }).map((_, i) => i * 60),

@@ -11,8 +11,8 @@ import { mat4, vec3 } from "gl-matrix";
 import { animations } from "./webgl/models/Guy/armature";
 import { connectWebsocket, type ServerPlayers } from "./utils";
 
-//const WS_URL = "ws://localhost:8080/ws";
-const WS_URL = "wss://api.andyfx.se/rustwebsocketgame/ws";
+const WS_URL = "ws://localhost:8080/ws";
+//const WS_URL = "wss://api.andyfx.se/rustwebsocketgame/ws";
 
 export class Game {
   universe: Universe;

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Slider, SliderUncontrolled } from "src/components/Slider";
 import { Poseplayground } from "src/game/poseplayground";
+import { animations } from "src/game/webgl/models/Guy/armature";
 
 type Saved = {
   sliderVals: number[][];
@@ -30,16 +31,29 @@ export default function Home() {
     });
   };
 
+  const resetSliderVals = () => {
+    setSliderVals(Array.from({ length: 19 }).map((_) => [0, 0, 0]));
+    setPosePos([0, 0, 0]);
+  };
+
   const flipLeftRight = () => {
-    //const LEFT = [5, 6, 7, 8, 13, 14, 15];
+    //const LEFT =  [5, 6, 7, 8, 13, 14, 15];
     //const RIGHT = [9, 10, 11, 12, 16, 17, 18];
 
+    //0,1,2,3,4 is "center" body part so flip z (rotation) on those instead
+
     const newSlidervals = [
-      sliderVals[0],
-      sliderVals[1],
-      sliderVals[2],
-      sliderVals[3],
-      sliderVals[4],
+      [sliderVals[0][0], sliderVals[0][1], -sliderVals[0][2]],
+      [sliderVals[1][0], sliderVals[1][1], -sliderVals[1][2]],
+      [sliderVals[2][0], sliderVals[2][1], -sliderVals[2][2]],
+      [sliderVals[3][0], sliderVals[3][1], -sliderVals[3][2]],
+      [sliderVals[4][0], sliderVals[4][1], -sliderVals[4][2]],
+      //sliderVals[0],
+      //sliderVals[1],
+      //sliderVals[2],
+      //sliderVals[3],
+      //sliderVals[4],
+
       sliderVals[9],
       sliderVals[10],
       sliderVals[11],
@@ -84,21 +98,41 @@ export default function Home() {
   const handleLoad = (i: number) => () => {
     setSliderVals(saved[i].sliderVals);
     setPosePos(saved[i].posePos);
-    ppg.current?.onKeyframeLoad(saved[i].posePos, saved[i].sliderVals);
+    //ppg.current?.onKeyframeLoad(saved[i].posePos, saved[i].sliderVals);
   };
 
-  const handleLog = () => {
+  const handleLoadExistingWalk = (i: number) => () => {
+    const existingSliderVals = animations.Walk.keyframes[i].sliderVals;
+    const existingPos = animations.Walk.keyframes[i].pos as number[];
+    if (!existingSliderVals) return;
+
+    setSliderVals(existingSliderVals);
+    setPosePos(existingPos);
+    //ppg.current?.onKeyframeLoad(existingPos, existingSliderVals);
+  };
+  const handleLoadExistingIdle = (i: number) => () => {
+    const existingSliderVals = animations.Idle.keyframes[i].sliderVals;
+    const existingPos = animations.Idle.keyframes[i].pos as number[];
+    if (!existingSliderVals) return;
+
+    setSliderVals(existingSliderVals);
+    setPosePos(existingPos);
+    //ppg.current?.onKeyframeLoad(existingPos, existingSliderVals);
+  };
+
+  const handleLog = useCallback(() => {
     if (!ppg.current) return;
     const quats = ppg.current.getPoseQuats();
     const pos = ppg.current.getPosePos();
     const keyframedatastring = JSON.stringify({
       quats: quats.map((quat) => Array.from(quat)),
       pos: Array.from(pos),
+      sliderVals,
     });
     console.log(keyframedatastring);
     window.navigator.clipboard.writeText(JSON.stringify(keyframedatastring));
     console.log("copied the above to clipboard");
-  };
+  }, [sliderVals]);
 
   useEffect(() => {
     if (!isInited.current && canvasRef.current && fpsRef.current) {
@@ -114,7 +148,19 @@ export default function Home() {
     };
     window.addEventListener("keydown", onkeydown);
     return () => window.removeEventListener("keydown", onkeydown);
+  }, [handleLog]);
+
+  useEffect(() => {
+    const i = setTimeout(() => {
+      ppg.current?.render();
+    }, 500);
+
+    return () => clearTimeout(i);
   }, []);
+
+  useEffect(() => {
+    ppg.current?.onKeyframeLoad(posePos, sliderVals);
+  }, [posePos, sliderVals]);
 
   return (
     <>
@@ -125,7 +171,73 @@ export default function Home() {
         height={64 * 5}
       />
       <div>
-        <h1 className="text-orange-300">tw</h1>
+        <button className="p-2 bg-orange-600 m-1" onClick={resetSliderVals}>
+          zero
+        </button>
+        <div>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingIdle(0)}
+          >
+            Idle_breatheout
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingIdle(1)}
+          >
+            Idle_breathein
+          </button>
+        </div>
+        <div>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(0)}
+          >
+            pass_L
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(1)}
+          >
+            peak_L
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(2)}
+          >
+            contact_L
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(3)}
+          >
+            down_L
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(4)}
+          >
+            pass_R
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(5)}
+          >
+            peak_R
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(6)}
+          >
+            contact_R
+          </button>
+          <button
+            className="p-2 bg-orange-600 m-1"
+            onClick={handleLoadExistingWalk(7)}
+          >
+            down_R
+          </button>
+        </div>
 
         <table className="bg-white opacity-50 mb-4">
           <tbody>
@@ -184,13 +296,17 @@ export default function Home() {
             LOG/COPY
           </button>
           {saved.map((_, i) => (
-            <button
-              key={i}
-              className="ml-1 p-1 border-2 w-7"
-              onClick={handleLoad(i)}
-            >
-              {`${i}`}
-            </button>
+            <div key={i} className="flex flex-col">
+              <button className="ml-1 p-1 border-2 w-7" onClick={handleLoad(i)}>
+                {`${i}`}
+              </button>
+              <button
+                className="ml-1 p-1 border-2 w-7"
+                onClick={handleDelete(i)}
+              >
+                x
+              </button>
+            </div>
           ))}
           <button className="ml-1 p-1 border-2" onClick={handleSave}>
             SAVE

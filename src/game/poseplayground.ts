@@ -42,7 +42,7 @@ export class Poseplayground {
   webgl: Webgl;
   renderables: DebugRenderable[];
   staticRenderables: StaticRenderable[];
-  sliderVals: number[][];
+  remappedSliderVals: number[][];
   camera: Camera;
   modelPos: vec3;
   posePos: vec3;
@@ -91,11 +91,11 @@ export class Poseplayground {
     ];
     this.staticRenderables = [{ vao: "Floor", model_mat: mat4.create() }];
     console.log("init js class");
-    this.sliderVals = Array.from({ length: 19 }).map((_, i) =>
+    this.remappedSliderVals = Array.from({ length: 19 }).map((_, i) =>
       JOINT_ROM[i].c.slice()
     );
 
-    this.poseQuats = this.sliderVals.map((val) =>
+    this.poseQuats = this.remappedSliderVals.map((val) =>
       quat.fromEuler(quat.create(), val[0], val[1], val[2])
     );
 
@@ -117,8 +117,8 @@ export class Poseplayground {
     const c = JOINT_ROM[boneIndex].c[i];
     const r = JOINT_ROM[boneIndex].r[i];
 
-    this.sliderVals[boneIndex][i] = c + val * r;
-    this.poseQuats = this.sliderVals.map((val) =>
+    this.remappedSliderVals[boneIndex][i] = c + val * r;
+    this.poseQuats = this.remappedSliderVals.map((val) =>
       quat.fromEuler(quat.create(), val[0], val[1], val[2])
     );
 
@@ -132,10 +132,10 @@ export class Poseplayground {
         const val = vals[i];
         const c = JOINT_ROM[boneIndex].c[i];
         const r = JOINT_ROM[boneIndex].r[i];
-        this.sliderVals[boneIndex][i] = c + val * r;
+        this.remappedSliderVals[boneIndex][i] = c + val * r;
       }
     });
-    this.poseQuats = this.sliderVals.map((val) =>
+    this.poseQuats = this.remappedSliderVals.map((val) =>
       quat.fromEuler(quat.create(), val[0], val[1], val[2])
     );
     this.render();
