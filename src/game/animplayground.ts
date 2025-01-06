@@ -19,15 +19,25 @@ export class Animplayground {
   staticRenderables: StaticRenderable[];
 
   constructor(canvas: HTMLCanvasElement, fpsElement: HTMLDivElement) {
+    //this.camera = {
+    //  eye: vec3.fromValues(1.9, 2.7, 3.25),
+    //  target: vec3.fromValues(0, 1, 0),
+    //};
+
     this.camera = {
-      eye: vec3.fromValues(1.9, 2.7, 3.25),
+      eye: vec3.fromValues(3, 2, 1),
       target: vec3.fromValues(0, 1, 0),
     };
 
     this.renderables = [
       {
         vao: "Guy",
-        model_mat: mat4.create(),
+        //model_mat: mat4.create(),
+        model_mat: mat4.fromRotationTranslation(
+          mat4.create(),
+          quat.fromEuler(quat.create(), 0, 0, 0),
+          vec3.fromValues(0, 0, -1)
+        ),
         keyframe: animations.Idle.keyframes[0],
         keyframe_when_inputchange: animations.Idle.keyframes[0],
         animTargetId: "Idle",
@@ -35,11 +45,24 @@ export class Animplayground {
       },
       {
         vao: "Guy",
-        model_mat: mat4.fromTranslation(
+        model_mat: mat4.fromRotationTranslation(
           mat4.create(),
-          vec3.fromValues(1, 0, 0)
+          quat.fromEuler(quat.create(), 0, 180, 0),
+          vec3.fromValues(0, 0, 1)
         ),
-        keyframe: animations.Kick.keyframes[1],
+        keyframe: animations.Idle.keyframes[0],
+        keyframe_when_inputchange: animations.Idle.keyframes[0],
+        animTargetId: "Idle",
+        elapsed_ms_since_inputchange: 0,
+      },
+      {
+        vao: "Guy",
+        model_mat: mat4.fromRotationTranslation(
+          mat4.create(),
+          quat.fromEuler(quat.create(), 0, 90, 0),
+          vec3.fromValues(-1.5, 0, 0)
+        ),
+        keyframe: animations.Idle.keyframes[0],
         keyframe_when_inputchange: animations.Idle.keyframes[0],
         animTargetId: "Idle",
         elapsed_ms_since_inputchange: 0,
@@ -55,46 +78,53 @@ export class Animplayground {
   }
 
   onPlayerInput(player_input: PlayerInput) {
-    const myguy = this.renderables[0];
-    myguy.keyframe_when_inputchange = {
-      quats: myguy.keyframe.quats.slice(),
-      pos: myguy.keyframe.pos.slice() as vec3,
-    };
+    //const myguy = this.renderables[0];
+    for (const myguy of this.renderables) {
+      myguy.keyframe_when_inputchange = {
+        quats: myguy.keyframe.quats.slice(),
+        pos: myguy.keyframe.pos.slice() as vec3,
+      };
 
-    console.log("onPlayerInput");
-    if (player_input.kick) {
-      myguy.animTargetId = "Kick";
-      myguy.elapsed_ms_since_inputchange = 0;
-    } else if (player_input.punch) {
-      myguy.animTargetId = "Punch";
-      myguy.elapsed_ms_since_inputchange = 0;
-    } else if (player_input.step_forward) {
+      console.log("onPlayerInput");
+      if (player_input.kick) {
+        myguy.animTargetId = "Kick";
+        myguy.elapsed_ms_since_inputchange = 0;
+      } else if (player_input.punch) {
+        myguy.animTargetId = "Punch";
+        myguy.elapsed_ms_since_inputchange = 0;
+      } else if (player_input.step_forward) {
+        myguy.animTargetId = "Walk";
+        myguy.elapsed_ms_since_inputchange = 0;
+
+        /*
       myguy.model_mat = mat4.translate(
         myguy.model_mat,
         myguy.model_mat,
         [0, 0, -0.1]
       );
-    } else if (player_input.step_backward) {
-      myguy.model_mat = mat4.translate(
-        myguy.model_mat,
-        myguy.model_mat,
-        [0, 0, 0.1]
-      );
-    } else if (player_input.step_left) {
-      myguy.model_mat = mat4.translate(
-        myguy.model_mat,
-        myguy.model_mat,
-        [-0.1, 0, 0]
-      );
-    } else if (player_input.step_right) {
-      myguy.model_mat = mat4.translate(
-        myguy.model_mat,
-        myguy.model_mat,
-        [0.1, 0, 0]
-      );
-    } else {
-      myguy.animTargetId = "Idle";
-      myguy.elapsed_ms_since_inputchange = 0;
+      */
+      } else if (player_input.step_backward) {
+        myguy.model_mat = mat4.translate(
+          myguy.model_mat,
+          myguy.model_mat,
+          [0, 0, 0.1]
+        );
+      } else if (player_input.step_left) {
+        myguy.model_mat = mat4.translate(
+          myguy.model_mat,
+          myguy.model_mat,
+          [-0.1, 0, 0]
+        );
+      } else if (player_input.step_right) {
+        myguy.model_mat = mat4.translate(
+          myguy.model_mat,
+          myguy.model_mat,
+          [0.1, 0, 0]
+        );
+      } else {
+        myguy.animTargetId = "Idle";
+        myguy.elapsed_ms_since_inputchange = 0;
+      }
     }
   }
 

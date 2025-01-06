@@ -71,6 +71,7 @@ export function createVao(
         gl.ARRAY_BUFFER,
         new Int32Array(model[name]),
         gl.STATIC_DRAW
+        //gl.STREAM_DRAW
       );
     }
   });

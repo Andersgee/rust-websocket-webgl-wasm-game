@@ -29,32 +29,32 @@ out float glow;
 
 void main() {
   //vec4 tex = texture(palette, uv);
-  vec4 tex = isTakingDmg ? vec4(0.7, 0.0, 0.0, 1.0) : texture(palette, vec2(uv.x, 1.0 - uv.y));
+  vec4 tex = isTakingDmg ? vec4(0.7f, 0.0f, 0.0f, 1.0f) : texture(palette, vec2(uv.x, 1.0f - uv.y));
 
   vcolor = tex.rgb;
-  glow = uv.x > 0.666 ? tex.a : 0.0; //maybe do this differently? at the moment just check if the "glow part" of the palette is used
+  glow = uv.x > 0.666f ? tex.a : 0.0f; //maybe do this differently? at the moment just check if the "glow part" of the palette is used
 
   int idx = joints.x;
   int idy = joints.y;
   int idz = joints.z;
   int idw = joints.w;
 
-  vec4 pa = (jointTransform[idx] * vec4(position, 1.0)) * weights.x;
-  vec4 pb = (jointTransform[idy] * vec4(position, 1.0)) * weights.y;
-  vec4 pc = (jointTransform[idz] * vec4(position, 1.0)) * weights.z;
-  vec4 pd = (jointTransform[idw] * vec4(position, 1.0)) * weights.w;
+  vec4 pa = (jointTransform[idx] * vec4(position, 1.0f)) * weights.x;
+  vec4 pb = (jointTransform[idy] * vec4(position, 1.0f)) * weights.y;
+  vec4 pc = (jointTransform[idz] * vec4(position, 1.0f)) * weights.z;
+  vec4 pd = (jointTransform[idw] * vec4(position, 1.0f)) * weights.w;
 
-  vec4 na = (jointTransform[idx] * vec4(normal, 1.0)) * weights.x;
-  vec4 nb = (jointTransform[idy] * vec4(normal, 1.0)) * weights.y;
-  vec4 nc = (jointTransform[idz] * vec4(normal, 1.0)) * weights.z;
-  vec4 nd = (jointTransform[idw] * vec4(normal, 1.0)) * weights.w;
+  vec4 na = (jointTransform[idx] * vec4(normal, 1.0f)) * weights.x;
+  vec4 nb = (jointTransform[idy] * vec4(normal, 1.0f)) * weights.y;
+  vec4 nc = (jointTransform[idz] * vec4(normal, 1.0f)) * weights.z;
+  vec4 nd = (jointTransform[idw] * vec4(normal, 1.0f)) * weights.w;
 
   vec4 p = vec4(pa + pb + pc + pd);
   vec4 n = vec4(na + nb + nc + nd);
-  vposition = (modelMat * vec4(p.xyz, 1.0)).xyz;
-  vnormal = (modelMat * vec4(n.xyz, 0.0)).xyz;
+  vposition = (modelMat * vec4(p.xyz, 1.0f)).xyz;
+  vnormal = (modelMat * vec4(n.xyz, 0.0f)).xyz;
   //vnormal = mat3(transpose(inverse(modelMat))) * n.xyz; //mor ecorrect but slower
-  gl_Position = projMat * viewMat * modelMat * vec4(p.xyz, 1.0);
+  gl_Position = projMat * viewMat * modelMat * vec4(p.xyz, 1.0f);
 }
 
 #endif
@@ -75,8 +75,8 @@ layout(location = 1) out vec4 lowpoly_glowtexture;
 
 void main() {
   vec3 objectColor = vcolor;
-  vec3 lightColor = vec3(1.0, 0.7, 0.7);
-  vec3 lightPos = vec3(0.0, 4.0, 0.0);
+  vec3 lightColor = vec3(1.0f, 0.7f, 0.7f);
+  vec3 lightPos = vec3(0.0f, 4.0f, 0.0f);
   //vec3 sunDir = normalize(vec3(1.0, 10.0, 1.0));
 
   vec3 N = normalize(vnormal); // normal
@@ -84,21 +84,21 @@ void main() {
   //vec3 L = sunDir;
   vec3 V = normalize(eye - vposition); // View dir (direction toward camera eye)
   vec3 H = normalize(V + L);           // halfway dir
-  float NL = max(dot(N, L), 0.0);
+  float NL = max(dot(N, L), 0.0f);
 
-  float ambientStrength = 0.66;
-  float shininess = 0.5;
+  float ambientStrength = 0.66f;
+  float shininess = 0.5f;
 
   // intensity of color
   vec3 ambient = lightColor * ambientStrength;
   vec3 diffuse = lightColor * NL;
-  float spec = pow(max(dot(N, H), 0.0), shininess);
+  float spec = pow(max(dot(N, H), 0.0f), shininess);
   vec3 specular = lightColor * spec;
 
   vec3 result = (ambient + diffuse + specular) * objectColor;
 
-  fragcolor = vec4(result, 1.0);
-  lowpoly_glowtexture = vec4(result * glow, 1.0);
+  fragcolor = vec4(result, 1.0f);
+  lowpoly_glowtexture = vec4(result * glow, 1.0f);
 
 }
 #endif
