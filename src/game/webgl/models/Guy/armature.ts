@@ -38,7 +38,7 @@ export const animations = {
   } as Animation,
   Idle: {
     keyframes: [kf.idle_breatheout, kf.idle_breathein, kf.idle_breatheout],
-    timings: [0, 500, 1000],
+    timings: [0, 600, 1200],
   } as Animation,
   Kick: {
     keyframes: [kf.idle_breatheout, kf.kick_charge, kf.kick_extend],
