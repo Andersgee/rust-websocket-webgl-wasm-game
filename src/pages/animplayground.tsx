@@ -45,7 +45,7 @@ export default function Home() {
         >
           click me
         </button>
-        <div ref={fpsRef}></div>
+        <div ref={fpsRef} className="text-red-500"></div>
       </div>
     </>
   );

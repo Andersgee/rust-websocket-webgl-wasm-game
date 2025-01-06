@@ -132,6 +132,14 @@ export class Animplayground {
     for (const renderable of this.renderables) {
       renderable.elapsed_ms_since_inputchange += elapsed_ms_since_last_render;
     }
+    const fps = Math.round(1000 / elapsed_ms_since_last_render);
+    this.fpsElement.innerHTML = fps.toString();
+    if (fps < 40) {
+      this.fpsElement.classList.add("text-red-500");
+    } else {
+      this.fpsElement.classList.remove("text-red-500");
+    }
+
     /*
     //DEBUG: apply renderable values here
     const q = quat.fromEuler(quat.create(), 0, 0, 0);
@@ -150,4 +158,8 @@ export class Animplayground {
       this.staticRenderables
     );
   }
+}
+
+function round2(x: number) {
+  return Math.round((x + Number.EPSILON) * 100) / 100;
 }
